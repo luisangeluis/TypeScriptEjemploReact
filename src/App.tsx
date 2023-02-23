@@ -1,28 +1,39 @@
-import { ChangeEventHandler, MouseEventHandler, useState } from 'react';
 import 'bulma/css/bulma.css';
+import { useEffect, useState } from 'react';
 import './App.css';
+import UserForm, { UserFormState } from './forms/User';
 
-//Components
-import Button from './components/Button';
-import Input from './components/Input';
+type User = UserFormState & { id: number };
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [users, setUsers] = useState<User[]>([]);
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    console.log(e.target.value);
+  const fetchUsers = async () => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/users');
+    const data: User[] = await response.json();
+    setUsers(data);
   };
 
-  const handleclick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-
-    console.log('hola mundo');
-  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <div className="App">
-      <Input handleChange={handleChange} placeholder="Nombre" />
-      <Button handleclick={handleclick} />
+      <ul>
+        {users.map((user) => {
+          return (
+            <li key={user.id}>
+              {user.name} {user.username}
+            </li>
+          );
+        })}
+      </ul>
+      <UserForm
+        handleSubmit={(user) => {
+          setUsers([...users, { ...user, id: Date.now() }]);
+        }}
+      />
     </div>
   );
 }

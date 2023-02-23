@@ -7,7 +7,7 @@ interface ButtonProps {
 const Button = ({ handleclick }: ButtonProps) => {
   return (
     <button onClick={handleclick} className="button is-primary">
-      Mi boton
+      Enviar
     </button>
   );
 };
